@@ -1,0 +1,66 @@
+/* Include the software serial port library */
+#include <SoftwareSerial.h>
+/* to communicate with the Bluetooth module's TXD pin */
+#define BT_SERIAL_TX 0
+/* to communicate with the Bluetooth module's RXD pin */
+#define BT_SERIAL_RX 1
+/* Initialise the software serial port */
+SoftwareSerial BluetoothSerial(BT_SERIAL_TX, BT_SERIAL_RX);
+//initializing our pins
+int led1 = 11; // select the pin for the LED
+int led2 =10; // select the pin for the LED
+int led3 =9; // select the pin for the LED
+
+
+void setup()  { 
+  /* Set the baud rate for the software serial port */
+BluetoothSerial.begin(9600); // Initialise BlueTooth
+delay(1000);
+  // declare pin 9, 10, 11 to be an output:
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+  digitalWrite(led1,1);
+  digitalWrite(led2,1);
+  digitalWrite(led3,1);
+} 
+ 
+// the loop routine runs over and over again forever:
+void loop()  
+{ 
+  int sensorValue = analogRead(A0); //Read from the sensor pin
+  BluetoothSerial.println(sensorValue); //Display the sensor value of the soil
+
+  //Color changes depending on the status of the soil
+  if (sensorValue >= 820)
+  {
+    color(0,10,10); // Red
+  }
+  else if (sensorValue >= 615 && sensorValue < 820)
+  {
+    color(1,9,10); // Orange with more Red
+  }
+  else if (sensorValue >=410 && sensorValue < 615)
+  {
+    color(3,7,10); // Orange
+  }
+  else if (sensorValue >=250 && sensorValue <410)
+  {
+    color(7,3,10); // Yellow
+  }
+  else if (sensorValue >=0 && sensorValue <250)
+  {
+    color(10,0,10); // Green
+  }
+  else {
+    color(0,0,0); //White
+  }
+  delay(10000); // Sensor will read moisture level every 10 seconds
+  // You can change the time depending on your preference
+}
+ 
+void color(int B, int R, int Y){
+  analogWrite(led1, B*25);
+  analogWrite(led2, R*25);
+  analogWrite(led3, Y*25);
+}
